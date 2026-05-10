@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537843252753",
+    "project_id": "quizapp-geo-ataoury",
+    "storage_bucket": "quizapp-geo-ataoury.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537843252753:android:7020af129a6de67e0c7bb0",
+        "android_client_info": {
+          "package_name": "com.ataoury.youssef.quizappgeo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0hPc2-_-pV1BI-XfbQMwltNyASOmdpZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
