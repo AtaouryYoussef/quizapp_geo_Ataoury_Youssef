@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="@android:color/white"
+    android:background="@drawable/bg_app_gradient"
     tools:context="com.ataoury.youssef.quizappgeo.ui.quiz.QuizActivity">
 
     <TextView
@@ -30,8 +30,8 @@
         android:layout_marginTop="18dp"
         app:cardCornerRadius="18dp"
         app:cardElevation="2dp"
-        app:cardBackgroundColor="#F7F4FF"
-        app:strokeColor="#D6C9FF"
+        app:cardBackgroundColor="#ECF9F7"
+        app:strokeColor="#BFE9E3"
         app:strokeWidth="1dp">
 
         <TextView

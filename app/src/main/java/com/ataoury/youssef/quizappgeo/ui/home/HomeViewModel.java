@@ -23,8 +23,16 @@ public class HomeViewModel extends ViewModel {
 
     public HomeViewModel() {
         this.locationService = new LocationService();
-        this.firebaseAuth = FirebaseAuth.getInstance();
-        currentUser.setValue(firebaseAuth.getCurrentUser());
+        FirebaseAuth authInstance;
+        try {
+            authInstance = FirebaseAuth.getInstance();
+            currentUser.setValue(authInstance.getCurrentUser());
+        } catch (Exception e) {
+            authInstance = null;
+            currentUser.setValue(null);
+            errorMessage.setValue("Firebase non initialisé.");
+        }
+        this.firebaseAuth = authInstance;
     }
 
     public LiveData<String> getCityName() {
@@ -59,7 +67,9 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void signOut() {
-        firebaseAuth.signOut();
+        if (firebaseAuth != null) {
+            firebaseAuth.signOut();
+        }
         currentUser.setValue(null);
     }
 }

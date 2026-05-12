@@ -37,14 +37,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        authViewModel = new ViewModelProvider(this, new AuthViewModel.Factory(getApplication()))
-                .get(AuthViewModel.class);
-
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         MaterialButton btnLogin = findViewById(R.id.btnLogin);
         MaterialButton btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         TextView tvRegisterLink = findViewById(R.id.tvRegisterLink);
+
+        try {
+            authViewModel = new ViewModelProvider(this, new AuthViewModel.Factory(getApplication()))
+                    .get(AuthViewModel.class);
+        } catch (Exception e) {
+            Toast.makeText(this, "Configuration Firebase invalide. Vérifiez google-services.json.", Toast.LENGTH_LONG)
+                    .show();
+            btnLogin.setEnabled(false);
+            btnGoogleSignIn.setEnabled(false);
+            tvRegisterLink.setEnabled(false);
+            return;
+        }
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";

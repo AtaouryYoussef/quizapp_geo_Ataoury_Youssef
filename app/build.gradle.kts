@@ -5,9 +5,11 @@ val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.inputStream())
 }
+val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY", "")
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -27,7 +29,7 @@ android {
         buildConfigField(
             "String",
             "GEMINI_API_KEY",
-            "\"${localProperties["AIzaSyCgRXcvHUAGlPRH_TZP91G1sNPauU7E21Q"]}\""
+            "\"$geminiApiKey\""
         )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

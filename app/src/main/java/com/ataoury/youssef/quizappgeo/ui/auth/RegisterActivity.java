@@ -23,15 +23,23 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        authViewModel = new ViewModelProvider(this, new AuthViewModel.Factory(getApplication()))
-                .get(AuthViewModel.class);
-
         TextInputEditText etName = findViewById(R.id.etName);
         TextInputEditText etEmail = findViewById(R.id.etEmail);
         TextInputEditText etPassword = findViewById(R.id.etPassword);
         TextInputEditText etConfirmPassword = findViewById(R.id.etConfirmPassword);
         MaterialButton btnRegister = findViewById(R.id.btnRegister);
         TextView tvLoginLink = findViewById(R.id.tvLoginLink);
+
+        try {
+            authViewModel = new ViewModelProvider(this, new AuthViewModel.Factory(getApplication()))
+                    .get(AuthViewModel.class);
+        } catch (Exception e) {
+            Toast.makeText(this, "Configuration Firebase invalide. Vérifiez google-services.json.", Toast.LENGTH_LONG)
+                    .show();
+            btnRegister.setEnabled(false);
+            tvLoginLink.setEnabled(false);
+            return;
+        }
 
         btnRegister.setOnClickListener(v -> {
             String name = etName.getText() != null ? etName.getText().toString().trim() : "";

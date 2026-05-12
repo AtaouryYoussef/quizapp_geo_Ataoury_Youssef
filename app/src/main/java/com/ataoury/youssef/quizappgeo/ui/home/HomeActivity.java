@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.ataoury.youssef.quizappgeo.R;
 import com.ataoury.youssef.quizappgeo.ui.auth.LoginActivity;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity {
@@ -28,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private HomeViewModel homeViewModel;
     private TextView tvCityValue;
+    private TextInputEditText etManualCity;
     private boolean shouldStartQuizWhenCityReady;
 
     private final ActivityResultLauncher<String[]> locationPermissionLauncher = registerForActivityResult(
@@ -52,11 +55,22 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView tvWelcome = findViewById(R.id.tvWelcome);
         tvCityValue = findViewById(R.id.tvCityValue);
+        etManualCity = findViewById(R.id.etManualCity);
         MaterialButton btnStartQuiz = findViewById(R.id.btnStartQuiz);
+        MaterialButton btnUseManualCity = findViewById(R.id.btnUseManualCity);
         MaterialButton btnHistory = findViewById(R.id.btnHistory);
         MaterialButton btnLogout = findViewById(R.id.btnLogout);
 
         btnStartQuiz.setOnClickListener(v -> requestLocationAndDetectCity());
+
+        btnUseManualCity.setOnClickListener(v -> {
+            String manualCity = etManualCity.getText() != null ? etManualCity.getText().toString().trim() : "";
+            if (TextUtils.isEmpty(manualCity)) {
+                Toast.makeText(this, "Saisissez une ville avant de continuer.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            startQuizForCity(manualCity);
+        });
 
         btnHistory.setOnClickListener(v -> openScreen(HISTORY_ACTIVITY_FQCN, null));
 
@@ -78,9 +92,7 @@ public class HomeActivity extends AppCompatActivity {
                 tvCityValue.setText(city);
                 if (shouldStartQuizWhenCityReady) {
                     shouldStartQuizWhenCityReady = false;
-                    Bundle extras = new Bundle();
-                    extras.putString("EXTRA_CITY_NAME", city);
-                    openScreen(QUIZ_ACTIVITY_FQCN, extras);
+                    startQuizForCity(city);
                 }
             }
         });
@@ -136,6 +148,12 @@ public class HomeActivity extends AppCompatActivity {
         } catch (ClassNotFoundException e) {
             Toast.makeText(this, "Écran non disponible pour le moment.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void startQuizForCity(@NonNull String city) {
+        Bundle extras = new Bundle();
+        extras.putString("EXTRA_CITY_NAME", city);
+        openScreen(QUIZ_ACTIVITY_FQCN, extras);
     }
 
     private void animateEntry(View container) {

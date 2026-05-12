@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ataoury.youssef.quizappgeo.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -28,6 +29,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerHistory);
         tvEmpty = findViewById(R.id.tvEmpty);
+        MaterialButton btnBackHistory = findViewById(R.id.btnBackHistory);
+
+        btnBackHistory.setOnClickListener(v -> finish());
 
         historyAdapter = new HistoryAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

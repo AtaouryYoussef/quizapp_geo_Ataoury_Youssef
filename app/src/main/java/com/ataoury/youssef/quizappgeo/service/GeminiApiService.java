@@ -26,7 +26,7 @@ public class GeminiApiService {
         void onError(String message);
     }
 
-    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+    private static final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
     private static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
     private final OkHttpClient okHttpClient;
@@ -42,9 +42,17 @@ public class GeminiApiService {
             return;
         }
 
-        String prompt = "Genere 10 questions de quiz en JSON sur la ville de " + cityName +
-                ". Format : [{question, choices:[4 options], correctIndex}]. " +
-                "Retourne UNIQUEMENT le JSON.";
+        String prompt = "Tu es un generateur de quiz geo local. " +
+                "Produit exactement 10 questions sur la ville de " + cityName + ". " +
+                "Chaque question doit etre personnalisee a cette ville avec des references concretes (monuments, quartiers, transport, "
+                +
+                "equipe locale, economie locale, histoire locale, culture locale). " +
+                "Interdit: formulations generiques reutilisables pour n'importe quelle ville, comme 'dans cette ville' sans element local. "
+                +
+                "Chaque question doit contenir au moins un nom propre local ou un fait numerique local plausible. " +
+                "Retourne uniquement un JSON array valide de 10 objets avec exactement ces champs: " +
+                "question (string), choices (array de 4 strings), correctIndex (int de 0 a 3). " +
+                "Ne renvoie aucun markdown, aucune explication, aucun texte hors JSON.";
 
         RequestBody requestBody = buildRequestBody(prompt);
         Request request = new Request.Builder()
@@ -101,6 +109,46 @@ public class GeminiApiService {
 
         JsonObject requestJson = new JsonObject();
         requestJson.add("contents", contents);
+
+        JsonObject generationConfig = new JsonObject();
+        generationConfig.addProperty("temperature", 0.4);
+        generationConfig.addProperty("responseMimeType", "application/json");
+
+        JsonObject responseSchema = new JsonObject();
+        responseSchema.addProperty("type", "ARRAY");
+
+        JsonObject itemSchema = new JsonObject();
+        itemSchema.addProperty("type", "OBJECT");
+
+        JsonObject properties = new JsonObject();
+
+        JsonObject questionProperty = new JsonObject();
+        questionProperty.addProperty("type", "STRING");
+        properties.add("question", questionProperty);
+
+        JsonObject choicesProperty = new JsonObject();
+        choicesProperty.addProperty("type", "ARRAY");
+        JsonObject choiceItem = new JsonObject();
+        choiceItem.addProperty("type", "STRING");
+        choicesProperty.add("items", choiceItem);
+        properties.add("choices", choicesProperty);
+
+        JsonObject correctIndexProperty = new JsonObject();
+        correctIndexProperty.addProperty("type", "INTEGER");
+        properties.add("correctIndex", correctIndexProperty);
+
+        itemSchema.add("properties", properties);
+
+        JsonArray required = new JsonArray();
+        required.add("question");
+        required.add("choices");
+        required.add("correctIndex");
+        itemSchema.add("required", required);
+
+        responseSchema.add("items", itemSchema);
+        generationConfig.add("responseSchema", responseSchema);
+
+        requestJson.add("generationConfig", generationConfig);
 
         return RequestBody.create(requestJson.toString(), JSON_MEDIA_TYPE);
     }
